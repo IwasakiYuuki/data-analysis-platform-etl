@@ -95,6 +95,8 @@ HDFS_PATHS = {
     },
     "forex": "/data/lake/yfinance/forex/price/main",
     "index": "/data/lake/yfinance/index/value/main",
+    "company_info": "/data/lake/yfinance/company_info",
+    "financials": "/data/lake/yfinance/financials",
 }
 
 # データ取得間隔の設定
