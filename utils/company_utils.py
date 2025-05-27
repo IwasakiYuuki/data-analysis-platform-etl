@@ -4,6 +4,7 @@ import datetime
 import time
 import tempfile
 import os
+import logging # Add this import
 from airflow.providers.apache.hdfs.hooks.webhdfs import WebHDFSHook
 
 from utils.config import HDFS_PATHS, DEFAULT_REQUEST_DELAY
@@ -16,8 +17,8 @@ def get_company_info_from_yfinance(ticker: str):
     """
     try:
         tk = yf.Ticker(ticker)
+        time.sleep(DEFAULT_REQUEST_DELAY) # API呼び出し前に遅延を挿入
         info = tk.info
-        time.sleep(DEFAULT_REQUEST_DELAY)
         if info:
             # 必要な情報のみを抽出
             selected_info = {
@@ -52,29 +53,35 @@ def get_financial_statements_from_yfinance(ticker: str, statement_type: str, per
     statement_type: 'financials' (損益計算書), 'balance_sheet' (貸借対照表), 'cashflow' (キャッシュフロー計算書)
     period: 'annual' or 'quarterly'
     """
+    # 入力値の検証をtryブロックの外に移動
+    if statement_type not in ['financials', 'balance_sheet', 'cashflow']:
+        raise ValueError("Invalid statement_type. Must be 'financials', 'balance_sheet', or 'cashflow'.")
+
     try:
         tk = yf.Ticker(ticker)
+        time.sleep(DEFAULT_REQUEST_DELAY) # API呼び出し前に遅延を挿入
+
         if statement_type == 'financials':
             data = tk.financials if period == 'annual' else tk.quarterly_financials
         elif statement_type == 'balance_sheet':
             data = tk.balance_sheet if period == 'annual' else tk.quarterly_balance_sheet
         elif statement_type == 'cashflow':
             data = tk.cashflow if period == 'annual' else tk.quarterly_cashflow
-        else:
-            raise ValueError("Invalid statement_type. Must be 'financials', 'balance_sheet', or 'cashflow'.")
-
-        time.sleep(DEFAULT_REQUEST_DELAY)
-
+        
         if data is not None and not data.empty:
-            # データを転置し、日付をカラムに変換
+            # yfinanceの財務データは通常、指標がインデックス、日付がカラムの形式
+            # 転置して日付をインデックス、指標をカラムにする
             df = data.T
-            df['symbol'] = ticker
-            df['report_date'] = df.index.date # 日付をカラムとして追加
-            df.index.name = None # インデックス名を削除
-            df = df.reset_index(drop=True) # インデックスをリセット
+            df.index.name = 'report_date' # インデックスに名前を付ける
+            df = df.reset_index() # インデックス（日付）をカラムに変換
 
+            df['symbol'] = ticker # ティッカーシンボル情報を追加
+            
             # カラム名をクリーンアップ (特殊文字やスペースをアンダースコアに変換)
             df.columns = [col.replace(' ', '_').replace('.', '').replace('/', '_').replace('-', '_').lower() for col in df.columns]
+            
+            # report_dateがdatetime.dateオブジェクトであることを保証
+            df['report_date'] = pd.to_datetime(df['report_date']).dt.date
             
             # 日付関連のカラムを追加
             df['year'] = pd.to_datetime(df['report_date']).dt.year
@@ -156,8 +163,13 @@ def process_financial_data(hdfs_conn_id: str, market: str = "prime"):
                 combined_financial_data_for_write = combined_financial_data.rename(columns={'report_date': 'Date'})
                 combined_financial_data_for_write = combined_financial_data_for_write.set_index('Date')
 
-                # write_to_hdfs を呼び出す
-                write_to_hdfs(combined_financial_data_for_write, hdfs_hook, hdfs_base_path_for_write)
+                try: # Add try-except block here
+                    # write_to_hdfs を呼び出す
+                    write_to_hdfs(combined_financial_data_for_write, hdfs_hook, hdfs_base_path_for_write)
+                    print(f"Successfully wrote {period} {st_type} data to HDFS path: {hdfs_base_path_for_write}")
+                except Exception as e:
+                    # Log the error but allow the process to continue for other data types
+                    logging.error(f"Error writing {period} {st_type} data to HDFS path {hdfs_base_path_for_write}: {e}")
             else:
                 print(f"No {period} {st_type} data to write to HDFS for market: {market}")
 
