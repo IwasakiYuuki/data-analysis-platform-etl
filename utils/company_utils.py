@@ -4,7 +4,7 @@ import datetime
 import time
 import tempfile
 import os
-import logging # Add this import
+import logging
 from airflow.providers.apache.hdfs.hooks.webhdfs import WebHDFSHook
 
 from utils.config import HDFS_PATHS, DEFAULT_REQUEST_DELAY
@@ -163,7 +163,7 @@ def process_financial_data(hdfs_conn_id: str, market: str = "prime"):
                 combined_financial_data_for_write = combined_financial_data.rename(columns={'report_date': 'Date'})
                 combined_financial_data_for_write = combined_financial_data_for_write.set_index('Date')
 
-                try: # Add try-except block here
+                try:
                     # write_to_hdfs を呼び出す
                     write_to_hdfs(combined_financial_data_for_write, hdfs_hook, hdfs_base_path_for_write)
                     print(f"Successfully wrote {period} {st_type} data to HDFS path: {hdfs_base_path_for_write}")

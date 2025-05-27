@@ -1,4 +1,4 @@
-INSERT OVERWRITE TABLE default.dim_company
+INSERT INTO default.dim_company
 SELECT
     hash(rc.symbol) AS company_key,
     rc.symbol,
@@ -21,4 +21,8 @@ SELECT
     rc.phone,
     current_timestamp() AS load_timestamp
 FROM
-    default.raw_company_info rc;
+    default.raw_company_info rc
+LEFT JOIN
+    default.dim_company existing_dc ON hash(rc.symbol) = existing_dc.company_key
+WHERE
+    existing_dc.company_key IS NULL;

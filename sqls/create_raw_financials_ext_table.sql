@@ -2,13 +2,6 @@ CREATE EXTERNAL TABLE IF NOT EXISTS default.raw_financial_statements (
   -- 共通カラム
   symbol STRING,
   report_date STRING, -- YYYY-MM-DD 形式の文字列
-  statement_type STRING, -- 'financials', 'balance_sheet', 'cashflow'
-  period_type STRING,    -- 'annual', 'quarterly'
-
-  -- 日付パーティション用 (rawデータには含まれるが、Hiveのパーティションキーとしても使用)
-  year STRING,
-  month STRING,
-  day STRING,
 
   -- 損益計算書 (financials) の主要なカラム例
   tax_effect_of_unusual_items DOUBLE,
@@ -137,7 +130,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS default.raw_financial_statements (
   receivables_adjustments_allowances DOUBLE,
   other_receivables DOUBLE,
   taxes_receivable DOUBLE,
-  accounts_receivable DOUBLE,
+  accounts_payable DOUBLE,
   cash_cash_equivalents_and_short_term_investments DOUBLE,
   other_short_term_investments DOUBLE,
   cash_and_cash_equivalents DOUBLE,

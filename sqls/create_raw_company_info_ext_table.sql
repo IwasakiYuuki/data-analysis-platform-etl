@@ -9,7 +9,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS default.raw_company_info (
   website STRING,
   marketcap BIGINT,
   currency STRING,
-  exchange STRING,
+  `exchange` STRING,
   quotetype STRING,
   market STRING,
   address1 STRING,

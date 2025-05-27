@@ -52,7 +52,7 @@ SELECT
     raw.total_revenue,
     raw.operating_revenue,
 
-    -- 貸借対照表 (balance_sheet) の主要なカラム例
+    -- 貸借対照表 (balance_sheet) の主要なカラム例 - 順序を修正
     raw.treasury_shares_number,
     raw.ordinary_shares_number,
     raw.share_issued,
@@ -131,7 +131,7 @@ SELECT
     raw.receivables_adjustments_allowances,
     raw.other_receivables,
     raw.taxes_receivable,
-    raw.accounts_receivable,
+    raw.accounts_payable,
     raw.cash_cash_equivalents_and_short_term_investments,
     raw.other_short_term_investments,
     raw.cash_and_cash_equivalents,
@@ -205,4 +205,4 @@ JOIN
 WHERE
     raw.period_type = 'annual'
     AND to_date(raw.report_date) >= date '{{ params.prev_week_monday }}'
-    AND to_date(raw.report_date) <= date '{{ params.prev_week_friday }}';
+    AND to_date(raw.report_date) <= date '{{ params.prev_week_friday }}'

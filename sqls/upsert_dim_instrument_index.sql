@@ -12,12 +12,7 @@ SELECT
         WHEN i.symbol IN ('^GSPC', '^DJI', '^IXIC') THEN 'USD' -- 仮
         ELSE NULL
     END AS currency,
-    -- 指数によって取引所を決定
-    CASE
-        WHEN i.symbol IN ('^N225', '^TPX') THEN 'TSE' -- 仮
-        WHEN i.symbol IN ('^GSPC', '^DJI', '^IXIC') THEN 'NYSE/NASDAQ' -- 仮
-        ELSE NULL
-    END AS `exchange`,
+    'FX' AS `exchange`,
     NULL AS effective_start_date,
     NULL AS effective_end_date,
     NULL AS is_current

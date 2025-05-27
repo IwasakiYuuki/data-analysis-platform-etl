@@ -10,7 +10,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS default.dim_company (
   website STRING,            -- ウェブサイト
   market_cap BIGINT,         -- 時価総額
   currency STRING,           -- 通貨
-  exchange STRING,           -- 取引所
+  `exchange` STRING,           -- 取引所
   quote_type STRING,         -- 引用タイプ (EQUITYなど)
   market STRING,             -- 市場 (us_marketなど)
   address1 STRING,
