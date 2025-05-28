@@ -130,7 +130,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS default.raw_financial_statements (
   receivables_adjustments_allowances DOUBLE,
   other_receivables DOUBLE,
   taxes_receivable DOUBLE,
-  accounts_payable DOUBLE,
+  accounts_receivable DOUBLE,
   cash_cash_equivalents_and_short_term_investments DOUBLE,
   other_short_term_investments DOUBLE,
   cash_and_cash_equivalents DOUBLE,

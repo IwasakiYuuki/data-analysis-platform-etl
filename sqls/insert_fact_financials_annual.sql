@@ -131,7 +131,7 @@ SELECT
     raw.receivables_adjustments_allowances,
     raw.other_receivables,
     raw.taxes_receivable,
-    raw.accounts_payable,
+    raw.accounts_receivable,
     raw.cash_cash_equivalents_and_short_term_investments,
     raw.other_short_term_investments,
     raw.cash_and_cash_equivalents,
