@@ -1,2 +1,2 @@
-EXCHANGE_SYMBOLS = []
-MARKET_SYMBOLS = []
+EXCHANGE_SYMBOLS = ["JPX"]
+MARKET_SYMBOLS = ["prime", "standard", "growth", "etf"]
