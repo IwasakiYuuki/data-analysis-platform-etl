@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from lib.domains.stock.models import StockDataSchema
-from lib.domains.stock.providers.yfinance import YFinanceProvider
+from lib.domains.stock.providers.yfinance import YFinanceStockProvider
 
 
 @pytest.fixture
@@ -182,14 +182,14 @@ def sample_yfinance_stock_data_df3() -> pd.DataFrame:
     return df
 
 
-class TestYFinanceProvider:
+class TestYFinanceStockProvider:
 
     @pytest.fixture()
     def provider(self):
         """
         Fixture to create an instance of YFinanceProvider.
         """
-        return YFinanceProvider()
+        return YFinanceStockProvider()
 
     def test_convert_to_schema(self, provider, sample_yfinance_stock_data_df1):
         """

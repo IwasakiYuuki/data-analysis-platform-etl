@@ -1,6 +1,7 @@
 import logging
 import itertools
 import datetime
+from time import sleep
 import yfinance as yf
 import pandas as pd
 from typing import Generator, List
@@ -12,14 +13,16 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class YFinanceProvider(IStockProvider):
-    NUM_FETCH_BATCHES = 4
-    NUM_FETCH_THREADS = 4
+class YFinanceStockProvider(IStockProvider):
+    FETCH_BATCHES = 4
+    FETCH_THREADS = 4
+    FETCH_DELAY_SEC = 1
 
     def __init__(
         self,
         fetch_batches: int | None = None,
         fetch_threads: int | None = None,
+        fetch_delay_sec: int | None = None,
     ):
         """
         Initialize the YFinanceProvider with optional batch and thread settings.
@@ -28,9 +31,44 @@ class YFinanceProvider(IStockProvider):
             num_fetch_batches (int|None): Number of batches for fetching data.
             num_fetch_threads (int|None): Number of threads for fetching data.
         """
-        self.fetch_batches = fetch_batches if fetch_batches is not None else self.NUM_FETCH_BATCHES
-        self.fetch_threads = fetch_threads if fetch_threads is not None else self.NUM_FETCH_THREADS
+        self.fetch_batches = fetch_batches if fetch_batches is not None else self.FETCH_BATCHES
+        self.fetch_threads = fetch_threads if fetch_threads is not None else self.FETCH_THREADS
+        self.fetch_delay_sec = fetch_delay_sec if fetch_delay_sec is not None else self.FETCH_DELAY_SEC
 
+    def _get_tickers(
+        self,
+        exchange: str = "JPX",
+        market: str = "prime",
+    ) -> List[str]:
+        """
+        Get the list of stock tickers from the provider.
+        Currently, this method supported JPX (Japan Exchange Group).
+
+        Args:
+            exchange (str): The stock exchange to fetch tickers from (default is "JPX").
+            market (str): The market segment to fetch tickers from (default is "prime").
+        
+        Returns:
+            List[str]: List of stock ticker symbols.
+        """
+        # For now, we only support JPX (Japan Exchange Group).
+        if exchange != "JPX":
+            raise NotImplementedError(f"Exchange {exchange} is not supported by YFinanceProvider.")
+        if market not in ["prime", "standard", "growth", "eft"]:
+            raise ValueError(f"Market {market} is not supported by YFinanceProvider.")
+
+        JPX_URL = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+        MARKET_COLUMN_NAMES = {
+            "prime": "プライム（内国株式）",
+            "standard": "スタンダード（内国株式）",
+            "growth": "グロース（内国株式）",
+            "eft": "ETF・ETN",
+        }
+
+        df_jpx = pd.read_excel(JPX_URL)
+        stock_series = df_jpx["コード"][df_jpx["市場・商品区分"] == MARKET_COLUMN_NAMES[market]]
+        stock_list = list(stock_series.astype(str) + ".T")
+        return stock_list
 
     def _convert_to_schema(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -80,6 +118,7 @@ class YFinanceProvider(IStockProvider):
         interval: str,
         batches: int | None = None,
         threads: int | None = None,
+        delay_sec: int | None = None,
     ) -> pd.DataFrame:
         """
         Fetch stock data from Yahoo Finance.
@@ -99,6 +138,8 @@ class YFinanceProvider(IStockProvider):
             batches = self.fetch_batches
         if threads is None:
             threads = self.fetch_threads
+        if delay_sec is None:
+            delay_sec = self.fetch_delay_sec
 
         batch_dfs = []
         try:
@@ -115,10 +156,12 @@ class YFinanceProvider(IStockProvider):
                     raise ValueError("No data returned from Yahoo Finance.")
                 data_converted = self._convert_to_schema(data)
                 batch_dfs.append(data_converted)
+                sleep(delay_sec)
         except Exception as e:
             logger.error(f"Failed to fetch stock data: {e}")
         finally:
             combined_data = pd.concat(batch_dfs, axis=0)
+            StockDataSchema.validate(combined_data)
             return combined_data
 
     def get_stock_data(
@@ -144,7 +187,13 @@ class YFinanceProvider(IStockProvider):
         end_date: datetime.date,
         interval: str,
     ) -> pd.DataFrame:
-        raise NotImplementedError("This method is not implemented in YFinanceProvider.")
+        tickers = self._get_tickers(exchange=exchange)
+        return self.get_stock_data(
+            tickers=tickers,
+            start_date=start_date,
+            end_date=end_date,
+            interval=interval,
+        )
 
     def get_stock_data_by_market(
         self,
@@ -154,4 +203,13 @@ class YFinanceProvider(IStockProvider):
         end_date: datetime.date,
         interval: str,
     ) -> pd.DataFrame:
-        raise NotImplementedError("This method is not implemented in YFinanceProvider.")
+        tickers = self._get_tickers(
+            exchange=exchange,
+            market=market
+        )[:10]
+        return self.get_stock_data(
+            tickers=tickers,
+            start_date=start_date,
+            end_date=end_date,
+            interval=interval,
+        )
