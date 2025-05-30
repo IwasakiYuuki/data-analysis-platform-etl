@@ -6,14 +6,14 @@ import yfinance as yf
 import pandas as pd
 from typing import Generator, List
 
-from lib.domains.stock.providers import IStockProvider
-from lib.domains.stock.models import StockDataSchema
+from lib.domains.index.providers import IIndexProvider
+from lib.domains.index.models import IndexDataSchema
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class YFinanceStockProvider(IStockProvider):
+class YFinanceIndexProvider(IIndexProvider):
     FETCH_BATCHES = 4
     FETCH_THREADS = 4
     FETCH_DELAY_SEC = 1
@@ -35,50 +35,15 @@ class YFinanceStockProvider(IStockProvider):
         self.fetch_threads = fetch_threads if fetch_threads is not None else self.FETCH_THREADS
         self.fetch_delay_sec = fetch_delay_sec if fetch_delay_sec is not None else self.FETCH_DELAY_SEC
 
-    def _get_tickers(
-        self,
-        exchange: str = "JPX",
-        market: str = "prime",
-    ) -> List[str]:
-        """
-        Get the list of stock tickers from the provider.
-        Currently, this method supported JPX (Japan Exchange Group).
-
-        Args:
-            exchange (str): The stock exchange to fetch tickers from (default is "JPX").
-            market (str): The market segment to fetch tickers from (default is "prime").
-        
-        Returns:
-            List[str]: List of stock ticker symbols.
-        """
-        # For now, we only support JPX (Japan Exchange Group).
-        if exchange != "JPX":
-            raise NotImplementedError(f"Exchange {exchange} is not supported by YFinanceProvider.")
-        if market not in ["prime", "standard", "growth", "eft"]:
-            raise ValueError(f"Market {market} is not supported by YFinanceProvider.")
-
-        JPX_URL = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
-        MARKET_COLUMN_NAMES = {
-            "prime": "プライム（内国株式）",
-            "standard": "スタンダード（内国株式）",
-            "growth": "グロース（内国株式）",
-            "eft": "ETF・ETN",
-        }
-
-        df_jpx = pd.read_excel(JPX_URL)
-        stock_series = df_jpx["コード"][df_jpx["市場・商品区分"] == MARKET_COLUMN_NAMES[market]]
-        stock_list = list(stock_series.astype(str) + ".T")
-        return stock_list
-
     def _convert_to_schema(self, data: pd.DataFrame) -> pd.DataFrame:
         """
-        Convert the DataFrame to StockDataSchema.
+        Convert the DataFrame to IndexDataSchema.
         
         Args:
-            data (pd.DataFrame): The stock data DataFrame.
+            data (pd.DataFrame): The index data DataFrame.
         
         Returns:
-            StockDataSchema: The validated stock data schema.
+            IndexDataSchema: The validated index data schema.
         """
         data_swapped = data.swaplevel(0, 1, axis=1)
         data_stacked = data_swapped.stack(level="Ticker", future_stack=True)
@@ -95,7 +60,7 @@ class YFinanceStockProvider(IStockProvider):
             "Volume": "volume"
         }, axis=1)
         data_converted["datetime"] = data_converted["datetime"].dt.tz_localize(None)
-        StockDataSchema.validate(data_converted)
+        IndexDataSchema.validate(data_converted)
         return data_converted
 
     def _gen_batched_tickers(
@@ -110,7 +75,7 @@ class YFinanceStockProvider(IStockProvider):
                 break
             yield batch
 
-    def _get_stock_data(
+    def _get_index_data(
         self,
         tickers: List[str],
         start_date: datetime.date,
@@ -121,18 +86,18 @@ class YFinanceStockProvider(IStockProvider):
         delay_sec: int | None = None,
     ) -> pd.DataFrame:
         """
-        Fetch stock data from Yahoo Finance.
+        Fetch index data from Yahoo Finance.
 
-        This method retrieves stock data for the specified tickers and date range in parallel.
+        This method retrieves index data for the specified tickers and date range in parallel.
 
         Args:
-            tickers (List[str]): List of stock ticker symbols.
+            tickers (List[str]): List of index ticker symbols.
             start_date (datetime.date): Start date for the data.
             end_date (datetime.date): End date for the data.
             interval (str): Data interval (e.g., '1d', '1h', '1m').
         
         Returns:
-            pd.DataFrame: Stock data DataFrame.
+            pd.DataFrame: Index data DataFrame.
         """
         if batches is None:
             batches = self.fetch_batches
@@ -158,58 +123,24 @@ class YFinanceStockProvider(IStockProvider):
                 batch_dfs.append(data_converted)
                 sleep(delay_sec)
         except Exception as e:
-            logger.error(f"Failed to fetch stock data: {e}")
+            logger.error(f"Failed to fetch index data: {e}")
         finally:
             combined_data = pd.concat(batch_dfs, axis=0)
-            StockDataSchema.validate(combined_data)
+            IndexDataSchema.validate(combined_data)
             return combined_data
 
-    def get_stock_data(
+    def get_index_data(
         self,
         tickers: List[str],
         start_date: datetime.date,
         end_date: datetime.date,
         interval: str,
     ) -> pd.DataFrame:
-        return self._get_stock_data(
+        return self._get_index_data(
             tickers=tickers,
             start_date=start_date,
             end_date=end_date,
             interval=interval,
             batches=self.fetch_batches,
             threads=self.fetch_threads,
-        )
-
-    def get_stock_data_by_exchange(
-        self,
-        exchange: str,
-        start_date: datetime.date,
-        end_date: datetime.date,
-        interval: str,
-    ) -> pd.DataFrame:
-        tickers = self._get_tickers(exchange=exchange)
-        return self.get_stock_data(
-            tickers=tickers,
-            start_date=start_date,
-            end_date=end_date,
-            interval=interval,
-        )
-
-    def get_stock_data_by_market(
-        self,
-        exchange: str,
-        market: str,
-        start_date: datetime.date,
-        end_date: datetime.date,
-        interval: str,
-    ) -> pd.DataFrame:
-        tickers = self._get_tickers(
-            exchange=exchange,
-            market=market
-        )
-        return self.get_stock_data(
-            tickers=tickers,
-            start_date=start_date,
-            end_date=end_date,
-            interval=interval,
         )
