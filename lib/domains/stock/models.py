@@ -11,5 +11,5 @@ class StockDataSchema(pa.DataFrameModel):
     high: float = pa.Field(ge=0, description="Highest price of the stock during the period")
     low: float = pa.Field(ge=0, description="Lowest price of the stock during the period")
     close: float = pa.Field(ge=0, description="Closing price of the stock")
-    volume: float = pa.Field(ge=0, description="Volume of stocks traded")
+    volume: int = pa.Field(ge=0, description="Volume of stocks traded")
     symbol: str = pa.Field(description="Ticker symbol of the stock. eg. 'AAPL' for Apple Inc.")

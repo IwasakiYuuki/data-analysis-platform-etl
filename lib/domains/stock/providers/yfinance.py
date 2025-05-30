@@ -95,6 +95,7 @@ class YFinanceStockProvider(IStockProvider):
             "Volume": "volume"
         }, axis=1)
         data_converted["datetime"] = data_converted["datetime"].dt.tz_localize(None)
+        data_converted["volume"] = data_converted["volume"].astype(int)
         StockDataSchema.validate(data_converted)
         return data_converted
 

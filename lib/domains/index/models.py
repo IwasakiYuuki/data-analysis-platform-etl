@@ -11,5 +11,5 @@ class IndexDataSchema(pa.DataFrameModel):
     high: float = pa.Field(ge=0, description="Highest price of the index during the period")
     low: float = pa.Field(ge=0, description="Lowest price of the index during the period")
     close: float = pa.Field(ge=0, description="Closing price of the index")
-    volume: float = pa.Field(ge=0, description="Volume of index traded")
+    volume: int = pa.Field(ge=0, description="Volume of index traded")
     symbol: str = pa.Field(description="The symbol of the index. eg. 'JPY=X' for JPY/USD.")
