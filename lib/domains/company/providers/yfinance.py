@@ -35,15 +35,25 @@ class YFinanceCompanyProvider(ICompanyProvider):
         """
         self.fetch_delay_sec = fetch_delay_sec if fetch_delay_sec is not None else self.FETCH_DELAY_SEC
 
-    def _convert_to_schema(
+    def _convert_financial_df_to_schema(
         self,
         data: pd.DataFrame,
         symbol: str,
         period_type: str,
     ) -> pd.DataFrame:
+        """
+        Convert the raw financial DataFrame from yfinance to a schema-compliant DataFrame.
+        
+        Args:
+            data (pd.DataFrame): The raw financial data DataFrame (e.g., from yf.Ticker().financials).
+            symbol (str): The ticker symbol.
+            period_type (str): The type of period (e.g., "annual", "quarterly").
+        
+        Returns:
+            pd.DataFrame: The validated financial data schema.
+        """
         data = data.T
-        data.index.name = 'report_date'
-        data.resert_index(inplace=True)
+        data.reset_index(inplace=True) # Fixed typo
         data["symbol"] = symbol
         data["period_type"] = period_type
         data.columns = [
@@ -57,6 +67,35 @@ class YFinanceCompanyProvider(ICompanyProvider):
             ) for col in data.columns
         ]
         return data
+
+    def _convert_info_dict_to_schema(
+        self,
+        data: dict,
+        symbol: str,
+    ) -> pd.DataFrame:
+        """
+        Convert the raw info dictionary from yfinance to a schema-compliant DataFrame.
+        
+        Args:
+            data (dict): The raw info dictionary (from yf.Ticker().info).
+            symbol (str): The ticker symbol.
+        
+        Returns:
+            pd.DataFrame: The validated company info data schema.
+        """
+        df = pd.DataFrame([data])
+        df["symbol"] = symbol
+        df.columns = [
+            (
+                col
+                .replace(' ', '_')
+                .replace('.', '')
+                .replace('/', '_')
+                .replace('-', '_')
+                .lower()
+            ) for col in df.columns
+        ]
+        return df
     
     def _get_company_data(
         self,
@@ -81,28 +120,36 @@ class YFinanceCompanyProvider(ICompanyProvider):
         for ticker in tickers:
             try:
                 if category == "info":
-                    company_data = yf.Ticker(ticker).info
+                    raw_data = yf.Ticker(ticker).info
+                    if not isinstance(raw_data, dict):
+                        raise ValueError(f"Info data for {ticker} is not a dictionary.")
+                    converted_data = self._convert_info_dict_to_schema(raw_data, ticker)
                 elif category == "financials":
-                    company_data = yf.Ticker(ticker).financials
+                    raw_data = yf.Ticker(ticker).financials
+                    if not isinstance(raw_data, pd.DataFrame):
+                        raise ValueError(f"Financials data for {ticker} is not a DataFrame.")
+                    converted_data = self._convert_financial_df_to_schema(raw_data, ticker, period_type)
                 elif category == "balance_sheet":
-                    company_data = yf.Ticker(ticker).balance_sheet
+                    raw_data = yf.Ticker(ticker).balance_sheet
+                    if not isinstance(raw_data, pd.DataFrame):
+                        raise ValueError(f"Balance sheet data for {ticker} is not a DataFrame.")
+                    converted_data = self._convert_financial_df_to_schema(raw_data, ticker, period_type)
                 elif category == "cashflow":
-                    company_data = yf.Ticker(ticker).cashflow
+                    raw_data = yf.Ticker(ticker).cashflow
+                    if not isinstance(raw_data, pd.DataFrame):
+                        raise ValueError(f"Cashflow data for {ticker} is not a DataFrame.")
+                    converted_data = self._convert_financial_df_to_schema(raw_data, ticker, period_type)
                 else:
                     raise ValueError(f"Invalid category: {category}")
 
-                if not isinstance(company_data, pd.DataFrame):
-                    raise ValueError(f"Data for {ticker} is not a DataFrame")
-
-                converted_company_data = self._convert_to_schema(
-                    company_data,
-                    ticker,
-                    period_type
-                )
-                dfs.append(converted_company_data)
+                dfs.append(converted_data)
                 sleep(delay_sec)
             except Exception as e:
-                logger.error(f"Failed to fetch company data for {tickers}: {e}")
+                logger.error(f"Failed to fetch company data for {ticker} (category: {category}): {e}")
+
+        if not dfs:
+            logger.warning(f"No data collected for category {category} and tickers {tickers}.")
+            return pd.DataFrame() # Return empty DataFrame if no data was collected
 
         combined_company_data = pd.concat(dfs, axis=0)
         return combined_company_data
@@ -110,7 +157,7 @@ class YFinanceCompanyProvider(ICompanyProvider):
     def get_company_info_data(
         self,
         tickers: List[str],
-        period_type: str = "annual",
+        period_type: str = "annual", # period_type is not used for info, but kept for interface consistency
     ) -> pd.DataFrame:
         """
         Fetch company info data for the given tickers.
