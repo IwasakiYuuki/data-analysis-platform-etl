@@ -1,0 +1,323 @@
+from datetime import datetime
+import pandera.pandas as pa
+
+
+
+class CompanyInfoDataSchema(pa.DataFrameModel):
+    """
+    Schema for company info data.
+    """
+    symbol: str = pa.Field(description="The symbol of the company. eg. 'AAPL' for Apple inc.")
+    shortName: str = pa.Field(description="Short name of the company")
+    longBusinessSummary: str = pa.Field(description="Long business summary of the company")
+    sector: str = pa.Field(description="Sector of the company")
+    industry: str = pa.Field(description="Industry of the company")
+    fullTimeEmployees: str = pa.Field(description="Number of full-time employees in the company")
+    country: str = pa.Field(description="Country where the company is located")
+    website: str = pa.Field(description="Website of the company")
+    marketCap: int = pa.Field(description="Market capitalization of the company")
+    currency: str = pa.Field(description="Currency in which the company operates")
+    exchange: str = pa.Field(description="Stock exchange where the company is listed")
+    quateType: str = pa.Field(description="Type of the quote, e.g., 'EQUITY'")
+    market: str = pa.Field(description="Market where the company operates")
+    address1: str = pa.Field(description="Primary address of the company")
+    city: str = pa.Field(description="City where the company is located")
+    state: str = pa.Field(description="State where the company is located")
+    zip: str = pa.Field(description="ZIP code of the company's location")
+    phone: str = pa.Field(description="Phone number of the company")
+
+
+class CompanyFinancialsDataSchema(pa.DataFrameModel):
+    """
+    Schema for company financials data.
+    """
+    report_date: datetime = pa.Field(description="Date of the financial report")
+    symbol: str = pa.Field(description="The symbol of the company. eg. 'AAPL' for Apple inc.")
+    period_type: str = pa.Field(description="Type of the period, e.g., 'annual' or 'quarterly'")
+    # Revenue
+    total_revenue: float = pa.Field(ge=0, description="Total revenue of the company")
+    operating_revenue: float = pa.Field(ge=0, description="Operating revenue of the company")
+    # Cost of Revenue
+    cost_of_revenue: float = pa.Field(ge=0, description="Cost of revenue for the company")
+    reconciled_cost_of_revenue: float = pa.Field(ge=0, description="Reconciled cost of revenue for the company")
+    # Gross Profit
+    gross_profit: float = pa.Field(ge=0, description="Gross profit of the company")
+    # Operating Expenses
+    operating_expense: float = pa.Field(ge=0, description="Total operating expenses of the company")
+    selling_general_and_administration: float = pa.Field(ge=0, description="Selling, general and administrative expenses")
+    general_and_administrative_expense: float = pa.Field(ge=0, description="General and administrative expenses")
+    selling_and_marketing_expense: float = pa.Field(ge=0, description="Selling and marketing expenses")
+    research_and_development: float = pa.Field(ge=0, description="Research and development expenses")
+    other_operating_expenses: float = pa.Field(ge=0, description="Other operating expenses")
+    rent_expense_supplemental: float = pa.Field(ge=0, description="Supplemental rent expense")
+    rent_and_landing_fees: float = pa.Field(ge=0, description="Rent and landing fees")
+    # Depreciation and Amortization
+    depreciation_and_amortization_in_income_statement: float = pa.Field(description="Depreciation and amortization in income statement")
+    depreciation_income_statement: float = pa.Field(description="Depreciation in income statement")
+    depreciation_amortization_depletion_income_statement: float = pa.Field(description="Depreciation, amortization, and depletion in income statement")
+    amortization: float = pa.Field(description="Amortization expense")
+    amortization_of_intangibles_income_statement: float = pa.Field(description="Amortization of intangibles in income statement")
+    reconciled_depreciation: float = pa.Field(description="Reconciled depreciation")
+    # Operating Income
+    operating_income: float = pa.Field(description="Operating income of the company")
+    total_operating_income_as_reported: float = pa.Field(description="Total operating income as reported")
+    # Other Income/Expense
+    other_income_expense: float = pa.Field(description="Other income and expenses")
+    net_interest_income: float = pa.Field(description="Net interest income")
+    interest_income: float = pa.Field(description="Interest income")
+    interest_expense: float = pa.Field(description="Interest expense")
+    net_non_operating_interest_income_expense: float = pa.Field(description="Net non-operating interest income/expense")
+    interest_income_non_operating: float = pa.Field(description="Non-operating interest income")
+    interest_expense_non_operating: float = pa.Field(description="Non-operating interest expense")
+    other_non_operating_income_expenses: float = pa.Field(description="Other non-operating income and expenses")
+    total_other_finance_cost: float = pa.Field(description="Total other finance cost")
+    # Unusual Items
+    total_unusual_items: float = pa.Field(description="Total unusual items")
+    total_unusual_items_excluding_goodwill: float = pa.Field(description="Total unusual items excluding goodwill")
+    special_income_charges: float = pa.Field(description="Special income charges")
+    other_special_charges: float = pa.Field(description="Other special charges")
+    write_off: float = pa.Field(description="Write-off expense")
+    restructuring_and_mergern_acquisition: float = pa.Field(description="Restructuring and merger & acquisition expenses")
+    impairment_of_capital_assets: float = pa.Field(description="Impairment of capital assets")
+    gain_on_sale_of_ppe: float = pa.Field(description="Gain on sale of property, plant, and equipment")
+    gain_on_sale_of_business: float = pa.Field(description="Gain on sale of business")
+    gain_on_sale_of_security: float = pa.Field(description="Gain on sale of security")
+    # Earnings from Equity Interest
+    earnings_from_equity_interest: float = pa.Field(description="Earnings from equity interest")
+    # Pretax Income
+    pretax_income: float = pa.Field(description="Income before tax")
+    # Income Tax Expense
+    tax_provision: float = pa.Field(description="Income tax provision")
+    tax_effect_of_unusual_items: float = pa.Field(description="Tax effect of unusual items")
+    tax_rate_for_calcs: float = pa.Field(description="Tax rate used for calculations")
+    # Net Income from Continuous Operations
+    net_income_continuous_operations: float = pa.Field(description="Net income from continuous operations")
+    net_income_from_continuing_operation_net_minority_interest: float = pa.Field(description="Net income from continuing operations, net of minority interest")
+    # Net Income from Discontinuous Operations
+    net_income_discontinuous_operations: float = pa.Field(description="Net income from discontinuous operations")
+    # Net Income
+    net_income_from_continuing_and_discontinued_operation: float = pa.Field(description="Net income from continuing and discontinued operations")
+    net_income: float = pa.Field(description="Net income")
+    normalized_income: float = pa.Field(description="Normalized income")
+    # Non-controlling Interests
+    minority_interests: float = pa.Field(description="Minority interests")
+    net_income_including_noncontrolling_interests: float = pa.Field(description="Net income including noncontrolling interests")
+    # Net Income Attributable to Common Stockholders
+    otherunder_preferred_stock_dividend: float = pa.Field(description="Other/under preferred stock dividend")
+    net_income_common_stockholders: float = pa.Field(description="Net income attributable to common stockholders")
+    diluted_ni_availto_com_stockholders: float = pa.Field(description="Diluted net income available to common stockholders")
+    # Per Share Information
+    basic_average_shares: float = pa.Field(ge=0, description="Basic average shares outstanding")
+    diluted_average_shares: float = pa.Field(ge=0, description="Diluted average shares outstanding")
+    basic_eps: float = pa.Field(description="Basic earnings per share")
+    diluted_eps: float = pa.Field(description="Diluted earnings per share")
+    # EBITDA / EBIT
+    ebitda: float = pa.Field(description="Earnings Before Interest, Taxes, Depreciation, and Amortization")
+    normalized_ebitda: float = pa.Field(description="Normalized Earnings Before Interest, Taxes, Depreciation, and Amortization")
+    ebit: float = pa.Field(description="Earnings Before Interest and Taxes")
+    # Other
+    total_expenses: float = pa.Field(ge=0, description="Total expenses of the company")
+
+
+class CompanyBalanceSheetDataSchema(pa.DataFrameModel):
+    """
+    Schema for company balance sheet data.
+    """
+
+    report_date: datetime = pa.Field(description="Date of the financial report")
+    symbol: str = pa.Field(description="The symbol of the company. eg. 'AAPL' for Apple inc.")
+    period_type: str = pa.Field(description="Type of the period, e.g., 'annual' or 'quarterly'")
+    # Current Assets
+    current_assets: float = pa.Field(ge=0, description="Total current assets of the company")
+    cash_cash_equivalents_and_short_term_investments: float = pa.Field(ge=0, description="Cash, cash equivalents, and short-term investments")
+    cash_and_cash_equivalents: float = pa.Field(ge=0, description="Cash and cash equivalents")
+    restricted_cash: float = pa.Field(ge=0, description="Restricted cash")
+    cash_financial: float = pa.Field(ge=0, description="Cash (financial institutions)")
+    cash_cash_equivalents_and_federal_funds_sold: float = pa.Field(ge=0, description="Cash, cash equivalents, and federal funds sold")
+    other_short_term_investments: float = pa.Field(ge=0, description="Other short-term investments")
+    trading_securities: float = pa.Field(ge=0, description="Trading securities")
+    receivables: float = pa.Field(ge=0, description="Total receivables")
+    accounts_receivable: float = pa.Field(ge=0, description="Accounts receivable")
+    gross_accounts_receivable: float = pa.Field(ge=0, description="Gross accounts receivable")
+    allowance_for_doubtful_accounts_receivable: float = pa.Field(le=0, description="Allowance for doubtful accounts receivable")
+    other_receivables: float = pa.Field(ge=0, description="Other receivables")
+    taxes_receivable: float = pa.Field(ge=0, description="Taxes receivable")
+    inventory: float = pa.Field(ge=0, description="Total inventory")
+    finished_goods: float = pa.Field(ge=0, description="Finished goods inventory")
+    work_in_process: float = pa.Field(ge=0, description="Work in process inventory")
+    raw_materials: float = pa.Field(ge=0, description="Raw materials inventory")
+    other_inventories: float = pa.Field(ge=0, description="Other inventories")
+    prepaid_assets: float = pa.Field(ge=0, description="Prepaid assets")
+    current_deferred_assets: float = pa.Field(ge=0, description="Current deferred assets")
+    assets_held_for_sale_current: float = pa.Field(ge=0, description="Assets held for sale (current)")
+    hedging_assets_current: float = pa.Field(ge=0, description="Hedging assets (current)")
+    other_current_assets: float = pa.Field(ge=0, description="Other current assets")
+    # Non-current Assets
+    total_non_current_assets: float = pa.Field(ge=0, description="Total non-current assets of the company")
+    net_ppe: float = pa.Field(ge=0, description="Net property, plant, and equipment")
+    gross_ppe: float = pa.Field(ge=0, description="Gross property, plant, and equipment")
+    accumulated_depreciation: float = pa.Field(le=0, description="Accumulated depreciation")
+    properties: float = pa.Field(ge=0, description="Total properties")
+    land_and_improvements: float = pa.Field(ge=0, description="Land and improvements")
+    buildings_and_improvements: float = pa.Field(ge=0, description="Buildings and improvements")
+    machinery_furniture_equipment: float = pa.Field(ge=0, description="Machinery, furniture, and equipment")
+    construction_in_progress: float = pa.Field(ge=0, description="Construction in progress")
+    other_properties: float = pa.Field(ge=0, description="Other properties")
+    investment_properties: float = pa.Field(ge=0, description="Investment properties")
+    goodwill_and_other_intangible_assets: float = pa.Field(ge=0, description="Goodwill and other intangible assets")
+    goodwill: float = pa.Field(ge=0, description="Goodwill")
+    other_intangible_assets: float = pa.Field(ge=0, description="Other intangible assets")
+    investments_and_advances: float = pa.Field(ge=0, description="Investments and advances")
+    investmentin_financial_assets: float = pa.Field(ge=0, description="Investment in financial assets")
+    available_for_sale_securities: float = pa.Field(ge=0, description="Available-for-sale securities")
+    long_term_equity_investment: float = pa.Field(ge=0, description="Long-term equity investment")
+    investments_in_other_ventures_under_equity_method: float = pa.Field(ge=0, description="Investments in other ventures under equity method")
+    investmentsin_subsidiariesat_cost: float = pa.Field(ge=0, description="Investments in subsidiaries at cost")
+    other_investments: float = pa.Field(ge=0, description="Other investments")
+    non_current_deferred_taxes_assets: float = pa.Field(ge=0, description="Non-current deferred tax assets")
+    defined_pension_benefit: float = pa.Field(ge=0, description="Defined pension benefit assets")
+    non_current_prepaid_assets: float = pa.Field(ge=0, description="Non-current prepaid assets")
+    non_current_deferred_assets: float = pa.Field(ge=0, description="Non-current deferred assets")
+    other_non_current_assets: float = pa.Field(ge=0, description="Other non-current assets")
+    # Total Assets
+    total_assets: float = pa.Field(ge=0, description="Total assets of the company")
+    # Current Liabilities
+    current_liabilities: float = pa.Field(ge=0, description="Total current liabilities of the company")
+    current_debt_and_capital_lease_obligation: float = pa.Field(ge=0, description="Current debt and capital lease obligation")
+    current_debt: float = pa.Field(ge=0, description="Current debt")
+    current_capital_lease_obligation: float = pa.Field(ge=0, description="Current capital lease obligation")
+    payables: float = pa.Field(ge=0, description="Total payables")
+    accounts_payable: float = pa.Field(ge=0, description="Accounts payable")
+    other_payable: float = pa.Field(ge=0, description="Other payable")
+    total_tax_payable: float = pa.Field(ge=0, description="Total tax payable")
+    current_provisions: float = pa.Field(ge=0, description="Current provisions")
+    pensionand_other_post_retirement_benefit_plans_current: float = pa.Field(ge=0, description="Pension and other post-retirement benefit plans (current)")
+    other_current_liabilities: float = pa.Field(ge=0, description="Other current liabilities")
+    derivative_product_liabilities: float = pa.Field(ge=0, description="Derivative product liabilities")
+    # Non-current Liabilities
+    total_non_current_liabilities_net_minority_interest: float = pa.Field(ge=0, description="Total non-current liabilities, net of minority interest")
+    long_term_debt_and_capital_lease_obligation: float = pa.Field(ge=0, description="Long-term debt and capital lease obligation")
+    long_term_debt: float = pa.Field(ge=0, description="Long-term debt")
+    long_term_capital_lease_obligation: float = pa.Field(ge=0, description="Long-term capital lease obligation")
+    non_current_deferred_taxes_liabilities: float = pa.Field(ge=0, description="Non-current deferred tax liabilities")
+    non_current_deferred_revenue: float = pa.Field(ge=0, description="Non-current deferred revenue")
+    non_current_pension_and_other_postretirement_benefit_plans: float = pa.Field(ge=0, description="Non-current pension and other postretirement benefit plans")
+    long_term_provisions: float = pa.Field(ge=0, description="Long-term provisions")
+    tradeand_other_payables_non_current: float = pa.Field(ge=0, description="Trade and other payables (non-current)")
+    other_non_current_liabilities: float = pa.Field(ge=0, description="Other non-current liabilities")
+    # Total Liabilities
+    total_liabilities_net_minority_interest: float = pa.Field(ge=0, description="Total liabilities, net of minority interest")
+    net_debt: float = pa.Field(description="Net debt")
+    total_debt: float = pa.Field(ge=0, description="Total debt")
+    capital_lease_obligations: float = pa.Field(ge=0, description="Capital lease obligations")
+    # Equity and Capital Surplus
+    total_equity_gross_minority_interest: float = pa.Field(description="Total equity, gross of minority interest")
+    stockholders_equity: float = pa.Field(description="Total stockholders' equity")
+    common_stock_equity: float = pa.Field(description="Common stock equity")
+    capital_stock: float = pa.Field(ge=0, description="Capital stock")
+    common_stock: float = pa.Field(ge=0, description="Common stock")
+    additional_paid_in_capital: float = pa.Field(description="Additional paid-in capital")
+    share_issued: float = pa.Field(ge=0, description="Shares issued")
+    ordinary_shares_number: float = pa.Field(ge=0, description="Number of ordinary shares")
+    # Retained Earnings
+    retained_earnings: float = pa.Field(description="Retained earnings")
+    # Other Comprehensive Income
+    fixed_assets_revaluation_reserve: float = pa.Field(description="Fixed assets revaluation reserve")
+    other_equity_interest: float = pa.Field(description="Other equity interest")
+    # Treasury Stock
+    treasury_stock: float = pa.Field(le=0, description="Treasury stock")
+    treasury_shares_number: float = pa.Field(ge=0, description="Number of treasury shares")
+    # Non-controlling Interests
+    minority_interest: float = pa.Field(description="Minority interest")
+    # Total Net Assets (or Total Equity)
+    total_capitalization: float = pa.Field(description="Total capitalization")
+    tangible_book_value: float = pa.Field(description="Tangible book value")
+    invested_capital: float = pa.Field(description="Invested capital")
+    working_capital: float = pa.Field(description="Working capital")
+    net_tangible_assets: float = pa.Field(description="Net tangible assets")
+
+
+class CompanyCashFlowDataSchema(pa.DataFrameModel):
+    """
+    Schema for company cash flow data.
+    """
+    report_date: datetime = pa.Field(description="Date of the financial report")
+    symbol: str = pa.Field(description="The symbol of the company. eg. 'AAPL' for Apple inc.")
+    period_type: str = pa.Field(description="Type of the period, e.g., 'annual' or 'quarterly'")
+    # Operating Activities
+    operating_cash_flow: float = pa.Field(description="Cash flow from operating activities")
+    net_income_from_continuing_operations: float = pa.Field(description="Net income from continuing operations")
+    depreciation_and_amortization: float = pa.Field(description="Depreciation and amortization")
+    depreciation: float = pa.Field(description="Depreciation expense")
+    amortization_cash_flow: float = pa.Field(description="Amortization expense (cash flow)")
+    deferred_tax: float = pa.Field(description="Deferred tax")
+    gain_loss_on_sale_of_ppe: float = pa.Field(description="Gain or loss on sale of property, plant, and equipment")
+    gain_loss_on_investment_securities: float = pa.Field(description="Gain or loss on investment securities")
+    gain_loss_on_sale_of_business: float = pa.Field(description="Gain or loss on sale of business")
+    net_foreign_currency_exchange_gain_loss: float = pa.Field(description="Net foreign currency exchange gain or loss")
+    stock_based_compensation: float = pa.Field(description="Stock-based compensation expense")
+    provisionand_write_offof_assets: float = pa.Field(description="Provision and write-off of assets")
+    pension_and_employee_benefit_expense: float = pa.Field(description="Pension and employee benefit expense")
+    other_non_cash_items: float = pa.Field(description="Other non-cash items")
+    change_in_working_capital: float = pa.Field(description="Change in working capital")
+    change_in_receivables: float = pa.Field(description="Change in receivables")
+    change_in_inventory: float = pa.Field(description="Change in inventory")
+    change_in_payable: float = pa.Field(description="Change in payables")
+    change_in_prepaid_assets: float = pa.Field(description="Change in prepaid assets")
+    change_in_accrued_expense: float = pa.Field(description="Change in accrued expense")
+    change_in_other_current_assets: float = pa.Field(description="Change in other current assets")
+    change_in_other_current_liabilities: float = pa.Field(description="Change in other current liabilities")
+    taxes_refund_paid: float = pa.Field(description="Taxes refund paid")
+    dividend_received_cfo: float = pa.Field(description="Dividends received (operating activities)")
+    interest_received_cfo: float = pa.Field(description="Interest received (operating activities)")
+    interest_paid_cfo: float = pa.Field(description="Interest paid (operating activities)")
+    # Investing Activities
+    investing_cash_flow: float = pa.Field(description="Cash flow from investing activities")
+    capital_expenditure: float = pa.Field(le=0, description="Capital expenditure")
+    capital_expenditure_reported: float = pa.Field(le=0, description="Capital expenditure as reported")
+    net_ppe_purchase_and_sale: float = pa.Field(description="Net property, plant, and equipment purchase and sale")
+    purchase_of_ppe: float = pa.Field(le=0, description="Purchase of property, plant, and equipment")
+    sale_of_ppe: float = pa.Field(ge=0, description="Sale of property, plant, and equipment")
+    net_investment_purchase_and_sale: float = pa.Field(description="Net investment purchase and sale")
+    purchase_of_investment: float = pa.Field(le=0, description="Purchase of investment")
+    sale_of_investment: float = pa.Field(ge=0, description="Sale of investment")
+    net_investment_properties_purchase_and_sale: float = pa.Field(description="Net investment properties purchase and sale")
+    purchase_of_investment_properties: float = pa.Field(le=0, description="Purchase of investment properties")
+    sale_of_investment_properties: float = pa.Field(ge=0, description="Sale of investment properties")
+    net_intangibles_purchase_and_sale: float = pa.Field(description="Net intangibles purchase and sale")
+    purchase_of_intangibles: float = pa.Field(le=0, description="Purchase of intangibles")
+    sale_of_intangibles: float = pa.Field(ge=0, description="Sale of intangibles")
+    net_business_purchase_and_sale: float = pa.Field(description="Net business purchase and sale")
+    purchase_of_business: float = pa.Field(le=0, description="Purchase of business")
+    sale_of_business: float = pa.Field(ge=0, description="Sale of business")
+    dividends_received_cfi: float = pa.Field(ge=0, description="Dividends received (investing activities)")
+    interest_received_cfi: float = pa.Field(ge=0, description="Interest received (investing activities)")
+    net_other_investing_changes: float = pa.Field(description="Net other investing changes")
+    # Financing Activities
+    financing_cash_flow: float = pa.Field(description="Cash flow from financing activities")
+    net_issuance_payments_of_debt: float = pa.Field(description="Net issuance and payments of debt")
+    issuance_of_debt: float = pa.Field(ge=0, description="Issuance of debt")
+    repayment_of_debt: float = pa.Field(le=0, description="Repayment of debt")
+    net_long_term_debt_issuance: float = pa.Field(description="Net long-term debt issuance")
+    long_term_debt_issuance: float = pa.Field(ge=0, description="Long-term debt issuance")
+    long_term_debt_payments: float = pa.Field(le=0, description="Long-term debt payments")
+    net_short_term_debt_issuance: float = pa.Field(description="Net short-term debt issuance")
+    short_term_debt_issuance: float = pa.Field(ge=0, description="Short-term debt issuance")
+    short_term_debt_payments: float = pa.Field(le=0, description="Short-term debt payments")
+    net_common_stock_issuance: float = pa.Field(description="Net common stock issuance")
+    issuance_of_capital_stock: float = pa.Field(ge=0, description="Issuance of capital stock")
+    common_stock_issuance: float = pa.Field(ge=0, description="Common stock issuance")
+    repurchase_of_capital_stock: float = pa.Field(le=0, description="Repurchase of capital stock")
+    common_stock_payments: float = pa.Field(le=0, description="Common stock payments")
+    cash_dividends_paid: float = pa.Field(le=0, description="Cash dividends paid")
+    common_stock_dividend_paid: float = pa.Field(le=0, description="Common stock dividend paid")
+    interest_paid_cff: float = pa.Field(le=0, description="Interest paid (financing activities)")
+    net_other_financing_charges: float = pa.Field(description="Net other financing charges")
+    # Net Change in Cash
+    changes_in_cash: float = pa.Field(description="Net change in cash and cash equivalents")
+    effect_of_exchange_rate_changes: float = pa.Field(description="Effect of exchange rate changes on cash")
+    beginning_cash_position: float = pa.Field(ge=0, description="Beginning cash position")
+    end_cash_position: float = pa.Field(ge=0, description="End cash position")
+    other_cash_adjustment_outside_changein_cash: float = pa.Field(description="Other cash adjustment outside change in cash")
+    # Free Cash Flow
+    free_cash_flow: float = pa.Field(description="Free cash flow")
