@@ -108,8 +108,8 @@ class YFinanceIndexProvider(IIndexProvider):
             delay_sec = self.fetch_delay_sec
 
         batch_dfs = []
-        try:
-            for batch in self._gen_batched_tickers(tickers, batches):
+        for batch in self._gen_batched_tickers(tickers, batches):
+            try:
                 data = yf.download(
                     tickers=batch,
                     start=start_date,
@@ -123,12 +123,12 @@ class YFinanceIndexProvider(IIndexProvider):
                 data_converted = self._convert_to_schema(data)
                 batch_dfs.append(data_converted)
                 sleep(delay_sec)
-        except Exception as e:
-            logger.error(f"Failed to fetch index data: {e}")
-        finally:
-            combined_data = pd.concat(batch_dfs, axis=0)
-            IndexDataSchema.validate(combined_data)
-            return combined_data
+            except Exception as e:
+                logger.error(f"Failed to fetch index data: {e}")
+
+        combined_data = pd.concat(batch_dfs, axis=0)
+        IndexDataSchema.validate(combined_data)
+        return combined_data
 
     def get_index_data(
         self,

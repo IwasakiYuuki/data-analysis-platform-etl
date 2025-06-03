@@ -53,6 +53,7 @@ class YFinanceCompanyProvider(ICompanyProvider):
             pd.DataFrame: The validated financial data schema.
         """
         data = data.T
+        data.index.name = "report_date"
         data.reset_index(inplace=True) # Fixed typo
         data["symbol"] = symbol
         data["period_type"] = period_type
@@ -95,6 +96,11 @@ class YFinanceCompanyProvider(ICompanyProvider):
                 .lower()
             ) for col in df.columns
         ]
+        # Temporarily measure to ensure 'state' column exists
+        if "state" not in df.columns:
+            df["state"] = None
+        if "fulltimeemployees" not in df.columns:
+            df["fulltimeemployees"] = None
         return df
     
     def _get_company_data(
