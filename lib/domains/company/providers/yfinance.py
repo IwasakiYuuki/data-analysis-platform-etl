@@ -35,6 +35,41 @@ class YFinanceCompanyProvider(ICompanyProvider):
         """
         self.fetch_delay_sec = fetch_delay_sec if fetch_delay_sec is not None else self.FETCH_DELAY_SEC
 
+    def get_tickers(
+        self,
+        exchange: str,
+        market: str,
+    ) -> List[str]:
+        """
+        Get the list of stock tickers from the provider.
+        Currently, this method supported JPX (Japan Exchange Group).
+
+        Args:
+            exchange (str): The stock exchange to fetch tickers from (default is "JPX").
+            market (str): The market segment to fetch tickers from (default is "prime").
+        
+        Returns:
+            List[str]: List of stock ticker symbols.
+        """
+        # For now, we only support JPX (Japan Exchange Group).
+        if exchange != "JPX":
+            raise NotImplementedError(f"Exchange {exchange} is not supported by YFinanceProvider.")
+        if market not in ["prime", "standard", "growth", "eft"]:
+            raise ValueError(f"Market {market} is not supported by YFinanceProvider.")
+
+        JPX_URL = "https://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+        MARKET_COLUMN_NAMES = {
+            "prime": "プライム（内国株式）",
+            "standard": "スタンダード（内国株式）",
+            "growth": "グロース（内国株式）",
+            "eft": "ETF・ETN",
+        }
+
+        df_jpx = pd.read_excel(JPX_URL)
+        stock_series = df_jpx["コード"][df_jpx["市場・商品区分"] == MARKET_COLUMN_NAMES[market]]
+        stock_list = list(stock_series.astype(str) + ".T")
+        return stock_list
+
     def _convert_financial_df_to_schema(
         self,
         data: pd.DataFrame,
@@ -163,21 +198,19 @@ class YFinanceCompanyProvider(ICompanyProvider):
     def get_company_info_data(
         self,
         tickers: List[str],
-        period_type: str = "annual", # period_type is not used for info, but kept for interface consistency
     ) -> pd.DataFrame:
         """
         Fetch company info data for the given tickers.
 
         Args:
             tickers (List[str]): List of company symbols (e.g., ['AAPL', '7203.T']).
-            period_type (str): The type of period for the data (e.g., "annual", "quarterly").
 
         Returns:
             pd.DataFrame: DataFrame containing company info data with columns (CompanyInfoDataSchema).
         """
-        data = self._get_company_data(tickers, period_type, "info")
+        data = self._get_company_data(tickers, "annual", "info")
+        data = data.reindex(columns=CompanyInfoDataSchema.to_schema().columns.keys())
         CompanyInfoDataSchema.validate(data)
-        data = data[CompanyInfoDataSchema.to_schema().columns.keys()]
         if not isinstance(data, pd.DataFrame):
             raise TypeError("Expected data to be a pandas DataFrame")
         return data
@@ -199,8 +232,8 @@ class YFinanceCompanyProvider(ICompanyProvider):
         """
 
         data = self._get_company_data(tickers, period_type, "financials")
+        data = data.reindex(columns=CompanyFinancialsDataSchema.to_schema().columns.keys())
         CompanyFinancialsDataSchema.validate(data)
-        data = data[CompanyFinancialsDataSchema.to_schema().columns.keys()]
         if not isinstance(data, pd.DataFrame):
             raise TypeError("Expected data to be a pandas DataFrame")
         return data
@@ -222,8 +255,8 @@ class YFinanceCompanyProvider(ICompanyProvider):
         """
 
         data = self._get_company_data(tickers, period_type, "balance_sheet")
+        data = data.reindex(columns=CompanyBalanceSheetDataSchema.to_schema().columns.keys())
         CompanyBalanceSheetDataSchema.validate(data)
-        data = data[CompanyBalanceSheetDataSchema.to_schema().columns.keys()]
         if not isinstance(data, pd.DataFrame):
             raise TypeError("Expected data to be a pandas DataFrame")
         return data
@@ -245,8 +278,8 @@ class YFinanceCompanyProvider(ICompanyProvider):
         """
 
         data = self._get_company_data(tickers, period_type, "cashflow")
+        data = data.reindex(columns=CompanyCashFlowDataSchema.to_schema().columns.keys())
         CompanyCashFlowDataSchema.validate(data)
-        data = data[CompanyCashFlowDataSchema.to_schema().columns.keys()]
         if not isinstance(data, pd.DataFrame):
             raise TypeError("Expected data to be a pandas DataFrame")
         return data
