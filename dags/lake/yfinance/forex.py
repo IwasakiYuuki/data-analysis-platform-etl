@@ -83,8 +83,8 @@ with DAG(
         python_callable=get_and_upload_forex,
         op_kwargs={
             "forex_pairs": FOREX_PAIRS,
-            "start": "{{ data_interval_start.start_of('day').add(hours=1) }}",
-            "end": "{{ data_interval_end.start_of('day').add(hours=1) }}",
+            "start": "{{ data_interval_start.start_of('day') }}",
+            "end": "{{ data_interval_end.start_of('day') }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )
