@@ -16,17 +16,19 @@ BASE_PATH = f"/data/lake/stock/{PROVIDER}/{EXCHANGE}/{MARKET}"
 def get_and_upload_stock(
     exchange: str,
     market: str,
-    start: pendulum.DateTime,
-    end: pendulum.DateTime,
+    start: str,
+    end: str,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
+    start_datetime = pendulum.DateTime.fromisoformat(start)
+    end_datetime = pendulum.DateTime.fromisoformat(end)
     yp = YFinanceStockProvider()
     stock_data = yp.get_stock_data_by_market(
         exchange,
         market,
-        start,
-        end,
+        start_datetime,
+        end_datetime,
         "1m",
     )
     stock_data["year"] = stock_data["datetime"].dt.year

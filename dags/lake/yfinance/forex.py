@@ -38,16 +38,18 @@ BASE_PATH = f"/data/lake/forex/{PROVIDER}"
 
 def get_and_upload_forex(
     forex_pairs: list[str],
-    start: pendulum.Date,
-    end: pendulum.Date,
+    start: str,
+    end: str,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
+    start_datetime = pendulum.DateTime.fromisoformat(start)
+    end_datetime = pendulum.DateTime.fromisoformat(end)
     yp = YFinanceForexProvider()
     forex_data = yp.get_forex_data(
         forex_pairs,
-        start,
-        end,
+        start_datetime,
+        end_datetime,
         "1m",
     )
     forex_data["year"] = forex_data["datetime"].dt.year

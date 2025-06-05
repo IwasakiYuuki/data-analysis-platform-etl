@@ -56,16 +56,18 @@ BASE_PATH = f"/data/lake/index/{PROVIDER}"
 
 def get_and_upload_index(
     index_symbols: list[str],
-    start: pendulum.DateTime,
-    end: pendulum.DateTime,
+    start: str,
+    end: str,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
+    start_datetime = pendulum.DateTime.fromisoformat(start)
+    end_datetime = pendulum.DateTime.fromisoformat(end)
     yp = YFinanceIndexProvider()
     index_data = yp.get_index_data(
         index_symbols,
-        start,
-        end,
+        start_datetime,
+        end_datetime,
         "1m",
     )
     index_data["year"] = index_data["datetime"].dt.year
