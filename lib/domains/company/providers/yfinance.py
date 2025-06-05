@@ -68,7 +68,7 @@ class YFinanceCompanyProvider(ICompanyProvider):
         df_jpx = pd.read_excel(JPX_URL)
         stock_series = df_jpx["コード"][df_jpx["市場・商品区分"] == MARKET_COLUMN_NAMES[market]]
         stock_list = list(stock_series.astype(str) + ".T")
-        return stock_list
+        return stock_list[:5]
 
     def _convert_financial_df_to_schema(
         self,
