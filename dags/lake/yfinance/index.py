@@ -101,8 +101,8 @@ with DAG(
         python_callable=get_and_upload_index,
         op_kwargs={
             "index_symbols": INDEX_SYMBOLS,
-            "start": "{{ data_interval_start.date().substact(days=2) }}",
-            "end": "{{ data_interval_end.date().substact(days=2) }}",
+            "start": "{{ data_interval_start.date().subtract(days=2) }}",
+            "end": "{{ data_interval_end.date().subtract(days=2) }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )

@@ -62,8 +62,8 @@ with DAG(
         op_kwargs={
             "exchange": EXCHANGE,
             "market": MARKET,
-            "start": "{{ data_interval_start.date().substact(days=2) }}",
-            "end": "{{ data_interval_end.date().substact(days=2) }}",
+            "start": "{{ data_interval_start.date().subtract(days=2) }}",
+            "end": "{{ data_interval_end.date().subtract(days=2) }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )
