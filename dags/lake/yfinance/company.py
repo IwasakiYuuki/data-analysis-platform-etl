@@ -107,11 +107,11 @@ def get_and_upload_cashflow(
             hdfs_hook.load_file(tmp_file.name, hdfs_path, overwrite=True)
 
 with DAG(
-    dag_id="lake_yfinance_stock",
+    dag_id="lake_yfinance_company",
     schedule=None,
     start_date=datetime(2025, 4, 10),
     catchup=False,
-    tags=["DataLake", "YFinance", "Stock"]
+    tags=["DataLake", "YFinance", "Company"]
 ) as dag:  
     get_and_upload_info_task = PythonOperator(
         task_id="get_and_upload_info",
