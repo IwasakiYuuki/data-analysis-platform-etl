@@ -26,13 +26,11 @@ def get_and_upload_info(
     info_data = yp.get_company_info_data(tickers=tickers)
 
     # Upload to HDFS
-    for group, gdf in info_data.groupby(["year", "month"]):
-        year, month = group  # type: ignore
-        hdfs_path = f"{BASE_INFO_PATH}/year={year}/month={month}/data.csv"
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            gdf.to_csv(tmp_file.name, index=False)
-            hdfs_hook = WebHDFSHook(webhdfs_conn_id=webhdfs_conn_id)
-            hdfs_hook.load_file(tmp_file.name, hdfs_path, overwrite=True)
+    hdfs_path = f"{BASE_INFO_PATH}/data.csv"
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+        info_data.to_csv(tmp_file.name, index=False)
+        hdfs_hook = WebHDFSHook(webhdfs_conn_id=webhdfs_conn_id)
+        hdfs_hook.load_file(tmp_file.name, hdfs_path, overwrite=True)
 
 def get_and_upload_financials(
     exchange: str,
