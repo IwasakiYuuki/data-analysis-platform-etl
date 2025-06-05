@@ -16,8 +16,8 @@ BASE_PATH = f"/data/lake/stock/{PROVIDER}/{EXCHANGE}/{MARKET}"
 def get_and_upload_stock(
     exchange: str,
     market: str,
-    start: pendulum.Date,
-    end: pendulum.Date,
+    start: pendulum.DateTime,
+    end: pendulum.DateTime,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
@@ -62,8 +62,8 @@ with DAG(
         op_kwargs={
             "exchange": EXCHANGE,
             "market": MARKET,
-            "start": "{{ data_interval_start.date().subtract(days=2) }}",
-            "end": "{{ data_interval_end.date().subtract(days=2) }}",
+            "start": "{{ data_interval_start.start_of('day') }}",
+            "end": "{{ data_interval_end.start_of('day') }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )

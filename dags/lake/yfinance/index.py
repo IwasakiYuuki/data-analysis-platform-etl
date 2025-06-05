@@ -56,8 +56,8 @@ BASE_PATH = f"/data/lake/index/{PROVIDER}"
 
 def get_and_upload_index(
     index_symbols: list[str],
-    start: pendulum.Date,
-    end: pendulum.Date,
+    start: pendulum.DateTime,
+    end: pendulum.DateTime,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
@@ -101,8 +101,8 @@ with DAG(
         python_callable=get_and_upload_index,
         op_kwargs={
             "index_symbols": INDEX_SYMBOLS,
-            "start": "{{ data_interval_start.date().subtract(days=2) }}",
-            "end": "{{ data_interval_end.date().subtract(days=2) }}",
+            "start": "{{ data_interval_start.start_of('day') }}",
+            "end": "{{ data_interval_end.start_of('day') }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )
