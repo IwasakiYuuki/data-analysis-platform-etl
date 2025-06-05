@@ -1,9 +1,9 @@
 import tempfile
-from datetime import date
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.apache.hdfs.hooks.webhdfs import WebHDFSHook
+import pendulum
 
 from lib.domains.index.providers.yfinance import YFinanceIndexProvider
 
@@ -54,17 +54,13 @@ INDEX_SYMBOLS = [
 ]
 BASE_PATH = f"/data/lake/index/{PROVIDER}"
 
-def _get_period() -> tuple[date, date]:
-    start = datetime.strptime("{{ date_interval_start.to_date_string() }}", "%Y-%m-%d")
-    end = datetime.strptime("{{ date_interval_end.to_date_string() }}", "%Y-%m-%d")
-    return start, end
-
 def get_and_upload_index(
     index_symbols: list[str],
+    start: pendulum.Date,
+    end: pendulum.Date,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
-    start, end = _get_period()
     yp = YFinanceIndexProvider()
     index_data = yp.get_index_data(
         index_symbols,
@@ -95,7 +91,7 @@ def get_and_upload_index(
 
 with DAG(
     dag_id="lake_yfinance_index",
-    schedule=None,
+    schedule="00 11 * * Mon",
     start_date=datetime(2025, 4, 10),
     catchup=False,
     tags=["DataLake", "YFinance", "Index"]
@@ -105,8 +101,8 @@ with DAG(
         python_callable=get_and_upload_index,
         op_kwargs={
             "index_symbols": INDEX_SYMBOLS,
+            "start": "{{ data_interval_start.date().substact(days=2) }}",
+            "end": "{{ data_interval_end.date().substact(days=2) }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )
-
-

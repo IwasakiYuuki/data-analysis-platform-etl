@@ -1,9 +1,9 @@
 import tempfile
-from datetime import date
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.apache.hdfs.hooks.webhdfs import WebHDFSHook
+import pendulum
 
 from lib.domains.forex.providers.yfinance import YFinanceForexProvider
 
@@ -36,17 +36,13 @@ FOREX_PAIRS = [
 ]
 BASE_PATH = f"/data/lake/forex/{PROVIDER}"
 
-def _get_period() -> tuple[date, date]:
-    start = datetime.strptime("{{ date_interval_start.to_date_string() }}", "%Y-%m-%d")
-    end = datetime.strptime("{{ date_interval_end.to_date_string() }}", "%Y-%m-%d")
-    return start, end
-
 def get_and_upload_forex(
     forex_pairs: list[str],
+    start: pendulum.Date,
+    end: pendulum.Date,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
-    start, end = _get_period()
     yp = YFinanceForexProvider()
     forex_data = yp.get_forex_data(
         forex_pairs,
@@ -77,7 +73,7 @@ def get_and_upload_forex(
 
 with DAG(
     dag_id="lake_yfinance_forex",
-    schedule=None,
+    schedule="00 11 * * Mon",
     start_date=datetime(2025, 4, 10),
     catchup=False,
     tags=["DataLake", "YFinance", "Forex"]
@@ -87,7 +83,8 @@ with DAG(
         python_callable=get_and_upload_forex,
         op_kwargs={
             "forex_pairs": FOREX_PAIRS,
+            "start": "{{ data_interval_start.date().substact(days=2) }}",
+            "end": "{{ data_interval_end.date().substact(days=2) }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )
-
