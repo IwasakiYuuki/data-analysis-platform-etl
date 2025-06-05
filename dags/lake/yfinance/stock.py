@@ -1,5 +1,5 @@
 import tempfile
-from datetime import date
+import pendulum
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -13,18 +13,14 @@ EXCHANGE = "JPX"
 MARKET = "prime"
 BASE_PATH = f"/data/lake/stock/{PROVIDER}/{EXCHANGE}/{MARKET}"
 
-def _get_period() -> tuple[date, date]:
-    start = datetime.strptime("{{ date_interval_start.to_date_string() }}", "%Y-%m-%d")
-    end = datetime.strptime("{{ date_interval_end.to_date_string() }}", "%Y-%m-%d")
-    return start, end
-
 def get_and_upload_stock(
     exchange: str,
     market: str,
+    start: pendulum.Date,
+    end: pendulum.Date,
     webhdfs_conn_id: str = "webhdfs_default",
 ):
     # Get data
-    start, end = _get_period()
     yp = YFinanceStockProvider()
     stock_data = yp.get_stock_data_by_market(
         exchange,
@@ -55,7 +51,7 @@ def get_and_upload_stock(
 
 with DAG(
     dag_id="lake_yfinance_stock",
-    schedule=None,
+    schedule="00 11 * * Mon",
     start_date=datetime(2025, 4, 10),
     catchup=False,
     tags=["DataLake", "YFinance", "Stock"]
@@ -66,6 +62,8 @@ with DAG(
         op_kwargs={
             "exchange": EXCHANGE,
             "market": MARKET,
+            "start": "{{ data_interval_start.date() }}",
+            "end": "{{ data_interval_end.date() }}",
             "webhdfs_conn_id": "webhdfs_default",
         },
     )
