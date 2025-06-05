@@ -14,8 +14,8 @@ MARKET = "prime"
 BASE_PATH = f"/data/lake/stock/{PROVIDER}/{EXCHANGE}/{MARKET}"
 
 def _get_period() -> tuple[date, date]:
-    start = datetime.strptime("{{ date_interval_start | ds }}", "%Y-%m-%d")
-    end = datetime.strptime("{{ date_interval_end | ds }}", "%Y-%m-%d")
+    start = datetime.strptime("{{ date_interval_start.to_date_string() }}", "%Y-%m-%d")
+    end = datetime.strptime("{{ date_interval_end.to_date_string() }}", "%Y-%m-%d")
     return start, end
 
 def get_and_upload_stock(
