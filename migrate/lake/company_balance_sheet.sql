@@ -30,7 +30,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.company_balance_sheet (
   net_ppe DOUBLE,
   gross_ppe DOUBLE,
   accumulated_depreciation DOUBLE,
-  properties DUBLE,
+  properties DOUBLE,
   land_and_improvements DOUBLE,
   buildings_and_improvements DOUBLE,
   machinery_furniture_equipment DUOBLE,
