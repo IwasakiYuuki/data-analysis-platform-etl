@@ -10,10 +10,10 @@ from lib.domains.company.providers.yfinance import YFinanceCompanyProvider
 PROVIDER = "yfinance"
 EXCHANGE = "JPX"
 MARKET = "prime"
-BASE_INFO_PATH = f"/data/lake/company/info/{PROVIDER}/{EXCHANGE}/{MARKET}"
-BASE_FINANCIALS_PATH = f"/data/lake/company/financials/{PROVIDER}/{EXCHANGE}/{MARKET}"
-BASE_BALANCE_SHEET_PATH = f"/data/lake/company/balance_sheet/{PROVIDER}/{EXCHANGE}/{MARKET}"
-BASE_CASHFLOW_PATH = f"/data/lake/company/cashflow/{PROVIDER}/{EXCHANGE}/{MARKET}"
+BASE_INFO_PATH = f"/data/lake/company/info/provider={PROVIDER}/exchange={EXCHANGE}/market={MARKET}"
+BASE_FINANCIALS_PATH = f"/data/lake/company/financials/provider={PROVIDER}/exchange={EXCHANGE}/market={MARKET}"
+BASE_BALANCE_SHEET_PATH = f"/data/lake/company/balance_sheet/provider={PROVIDER}/exchange={EXCHANGE}/market={MARKET}"
+BASE_CASHFLOW_PATH = f"/data/lake/company/cashflow/provider={PROVIDER}/exchange={EXCHANGE}/market={MARKET}"
 
 def get_and_upload_info(
     exchange: str,

@@ -11,7 +11,7 @@ from lib.domains.stock.providers.yfinance import YFinanceStockProvider
 PROVIDER = "yfinance"
 EXCHANGE = "JPX"
 MARKET = "prime"
-BASE_PATH = f"/data/lake/stock/{PROVIDER}/{EXCHANGE}/{MARKET}"
+BASE_PATH = f"/data/lake/stock/provider={PROVIDER}/exchange={EXCHANGE}/market={MARKET}"
 
 def get_and_upload_stock(
     exchange: str,
