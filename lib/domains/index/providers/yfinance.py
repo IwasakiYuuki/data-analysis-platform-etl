@@ -140,6 +140,7 @@ class YFinanceIndexProvider(IIndexProvider):
                 logger.error(f"Failed to fetch index data: {e}")
 
         combined_data = pd.concat(batch_dfs, axis=0)
+        combined_data = combined_data.reindex(columns=IndexDataSchema.to_schema().columns.keys())
         IndexDataSchema.validate(combined_data)
         return combined_data
 

@@ -142,6 +142,7 @@ class YFinanceForexProvider(IForexProvider):
                 logger.error(f"Failed to fetch forex data: {e}")
 
         combined_data = pd.concat(batch_dfs, axis=0)
+        combined_data = combined_data.reindex(columns=ForexDataSchema.to_schema().columns.keys())
         ForexDataSchema.validate(combined_data)
         return combined_data
 

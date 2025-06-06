@@ -162,6 +162,7 @@ class YFinanceStockProvider(IStockProvider):
                 logger.error(f"Failed to fetch stock data: {e}")
 
         combined_data = pd.concat(batch_dfs, axis=0)
+        combined_data = combined_data.reindex(columns=StockDataSchema.to_schema().columns.keys())
         StockDataSchema.validate(combined_data)
         return combined_data
 
