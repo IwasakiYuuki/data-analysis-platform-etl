@@ -114,4 +114,4 @@ WITH SERDEPROPERTIES (
   'skip.header.line.count'='1'
 )
 STORED AS TEXTFILE
-LOCATION '/data/lake/company_balance_sheet/';
+LOCATION '/data/lake/company/balance_sheet/';

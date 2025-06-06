@@ -90,4 +90,4 @@ WITH SERDEPROPERTIES (
   'skip.header.line.count'='1'
 )
 STORED AS TEXTFILE
-LOCATION '/data/lake/company_cashflow/';
+LOCATION '/data/lake/company/cashflow/';
