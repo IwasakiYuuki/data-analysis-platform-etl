@@ -37,6 +37,7 @@ def get_and_upload_stock(
 
     # Upload to HDFS
     for group, gdf in stock_data.groupby(["year", "month", "day"]):
+        gdf.drop(columns=["year", "month", "day"], inplace=True)
         year, month, day = group  # type: ignore
         hdfs_path = (
             f"{BASE_PATH}"

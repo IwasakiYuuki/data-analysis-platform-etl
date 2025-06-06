@@ -50,6 +50,7 @@ def get_and_upload_financials(
     # Upload to HDFS
     for group, gdf in financials_data.groupby(["year", "month"]):
         year, month = group  # type: ignore
+        gdf.drop(columns=["year", "month"], inplace=True)
         hdfs_path = f"{BASE_FINANCIALS_PATH}/year={year}/month={month}/data.csv"
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
             gdf.to_csv(tmp_file.name, index=False)
@@ -74,6 +75,7 @@ def get_and_upload_balance_sheet(
     # Upload to HDFS
     for group, gdf in balance_sheet_data.groupby(["year", "month"]):
         year, month = group  # type: ignore
+        gdf.drop(columns=["year", "month"], inplace=True)
         hdfs_path = f"{BASE_BALANCE_SHEET_PATH}/year={year}/month={month}/data.csv"
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
             gdf.to_csv(tmp_file.name, index=False)
@@ -98,6 +100,7 @@ def get_and_upload_cashflow(
     # Upload to HDFS
     for group, gdf in cashflow_data.groupby(["year", "month"]):
         year, month = group  # type: ignore
+        gdf.drop(columns=["year", "month"], inplace=True)
         hdfs_path = f"{BASE_CASHFLOW_PATH}/year={year}/month={month}/data.csv"
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
             gdf.to_csv(tmp_file.name, index=False)

@@ -59,6 +59,7 @@ def get_and_upload_forex(
     # Upload to HDFS
     for group, gdf in forex_data.groupby(["symbol", "year", "month", "day"]):
         symbol, year, month, day = group  # type: ignore
+        gdf.drop(columns=["symbol", "year", "month", "day"], inplace=True)
         hdfs_path = (
             f"{BASE_PATH}"
             f"/symbol={symbol}"

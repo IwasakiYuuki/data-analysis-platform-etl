@@ -74,6 +74,7 @@ def get_and_upload_index(
     # Upload to HDFS
     for group, gdf in index_data.groupby(["symbol", "year", "month", "day"]):
         symbol, year, month, day = group  # type: ignore
+        gdf.drop(columns=["symbol", "year", "month", "day"], inplace=True)
         hdfs_path = (
             f"{BASE_PATH}"
             f"/symbol={symbol}"
