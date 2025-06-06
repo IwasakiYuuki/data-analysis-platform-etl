@@ -5,11 +5,11 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.stock (
   low DOUBLE,
   close DOUBLE,
   volume BIGINT,
-  symbol STRING,
+  symbol STRING
 )
 PARTITIONED BY (
   provider STRING,
-  exchange STRING,
+  `exchange` STRING,
   market STRING,
   year STRING,
   month STRING,

@@ -9,9 +9,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.company_info (
   website STRING,
   marketcap BIGINT,
   currency STRING,
-  exchange STRING,
   quotetype STRING,
-  market STRING,
   address1 STRING,
   city STRING,
   state STRING,
@@ -20,7 +18,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.company_info (
 )
 PARTITIONED BY (
   provider STRING,
-  exchange STRING,
+  `exchange` STRING,
   market STRING
 )
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'

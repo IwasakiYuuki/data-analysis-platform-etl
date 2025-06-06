@@ -4,7 +4,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.forex (
   high DOUBLE,
   low DOUBLE,
   close DOUBLE,
-  volume BIGINT,
+  volume BIGINT
 )
 PARTITIONED BY (
   provider STRING,

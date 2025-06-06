@@ -69,7 +69,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.company_financials (
 )
 PARTITIONED BY (
   provider STRING,
-  exchange STRING,
+  `exchange` STRING,
   market STRING,
   year INT,
   month INT
