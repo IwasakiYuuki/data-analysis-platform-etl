@@ -10,47 +10,44 @@ from lib.domains.index.providers.yfinance import YFinanceIndexProvider
 
 PROVIDER = "yfinance"
 INDEX_SYMBOLS = [
-    "^GSPC",  # S&P500
-    "^DJI",   # NYダウ
-    "^IXIC", # NASDAQ
-    "^NYA", # NYSE総合
-    "^XAX", # AMEX総合
-    "^BUK1000", # ブルームバーグ米国株式
-    "^RUT", # ラッセル2000
-    "^VIX", # VIX指数
-    "^FTSE", # FTSE100
-    "^GDAXI", # DAX
-    "^FCHI", # CAC40
-    "^STOXX50E", # EURO STOXX 50
-    "^N100", # EURO STOXX 100
-    "^BFX", # BEL 20
-    "MOEX.ME", # MOEX
-    "^HSI", # HSI
-    "^STI", # STI
-    "^AXJO", # ASX 200
-    "^AORD", # S&P/ASX 200
-    "^BSESN", # BSE SENSEX
-    "^JKSE", # IDX Composite
-    "^KLSE", # FTSE Bursa Malaysia KLCI
-    "^NZ50", # S&P/NZX 50 Index
-    "^KS11", # KOSPI Composite Index
-    "^TWII", # TSEC Capitalization Weighted Stock Index
-    "^GSPTSE", # TSEC Taiwan Weighted Index
-    "^BVSP", # Bovespa Index
-    "^MXX", # IPC Mexico
-    "^IPSA", # IPC Mexico
-    "^MERV", # MERVAL
-    "^TA125.TA", # TA-125 Index
-    "^CASE30", # EGX 30 Prise Return Index
-    "^JNOU.JO", # Top 40 USD Net Total Return Index
-    "DX-Y.NYB", # US Dollar Index
-    "^125904-USD-STRD", # MSCI EUROPE
-    "^XDB", # British Pound Currency Index
-    "^XDE", # Euro Currency Index
-    "000001.SS", # SSE Composite Index
-    "^N225", # Nikkei 225
-    "^XDN", # Japanese Yen Currency Index
-    "^XDA", # Australian Dollar Currency Index
+    "GSPC",  # S&P500
+    "DJI",   # NYダウ
+    "IXIC", # NASDAQ
+    "NYA", # NYSE総合
+    "XAX", # AMEX総合
+    "BUK1000", # ブルームバーグ米国株式
+    "RUT", # ラッセル2000
+    "VIX", # VIX指数
+    "FTSE", # FTSE100
+    "GDAXI", # DAX
+    "FCHI", # CAC40
+    "STOXX50E", # EURO STOXX 50
+    "N100", # EURO STOXX 100
+    "BFX", # BEL 20
+    "HSI", # HSI
+    "STI", # STI
+    "AXJO", # ASX 200
+    "AORD", # S&P/ASX 200
+    "BSESN", # BSE SENSEX
+    "JKSE", # IDX Composite
+    "KLSE", # FTSE Bursa Malaysia KLCI
+    "NZ50", # S&P/NZX 50 Index
+    "KS11", # KOSPI Composite Index
+    "TWII", # TSEC Capitalization Weighted Stock Index
+    "GSPTSE", # TSEC Taiwan Weighted Index
+    "BVSP", # Bovespa Index
+    "MXX", # IPC Mexico
+    "IPSA", # IPC Mexico
+    "MERV", # MERVAL
+    "TA125.TA", # TA-125 Index
+    "CASE30", # EGX 30 Prise Return Index
+    "JNOU.JO", # Top 40 USD Net Total Return Index
+    "125904-USD-STRD", # MSCI EUROPE
+    "XDB", # British Pound Currency Index
+    "XDE", # Euro Currency Index
+    "N225", # Nikkei 225
+    "XDN", # Japanese Yen Currency Index
+    "XDA", # Australian Dollar Currency Index
 ][:5]
 BASE_PATH = f"/data/lake/index/provider={PROVIDER}"
 

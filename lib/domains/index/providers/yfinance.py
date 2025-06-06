@@ -35,6 +35,16 @@ class YFinanceIndexProvider(IIndexProvider):
         self.fetch_threads = fetch_threads if fetch_threads is not None else self.FETCH_THREADS
         self.fetch_delay_sec = fetch_delay_sec if fetch_delay_sec is not None else self.FETCH_DELAY_SEC
 
+    def _convert_tickers(self, tickers: List[str]) -> List[str]:
+        """
+        Convert ticker symbols to Yahoo Finance format.
+        Args:
+            tickers (List[str]): List of index ticker symbols.
+        Returns:
+            List[str]: Converted list of ticker symbols.
+        """
+        return [f"^{ticker}" for ticker in tickers]
+
     def _convert_to_schema(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Convert the DataFrame to IndexDataSchema.
@@ -106,6 +116,8 @@ class YFinanceIndexProvider(IIndexProvider):
             threads = self.fetch_threads
         if delay_sec is None:
             delay_sec = self.fetch_delay_sec
+
+        tickers = self._convert_tickers(tickers)
 
         batch_dfs = []
         for batch in self._gen_batched_tickers(tickers, batches):
