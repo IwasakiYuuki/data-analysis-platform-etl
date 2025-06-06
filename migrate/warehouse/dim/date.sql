@@ -8,8 +8,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_dwh.dim_date (
   day_name STRING,       -- 曜日名 (例: 'Monday')
   week_of_year INT,
   quarter INT,
-  is_weekend BOOLEAN,
-  is_holiday BOOLEAN     -- 祝日フラグ (必要に応じて後で更新)
+  is_weekend BOOLEAN
 )
 STORED AS PARQUET
 LOCATION '/data/warehouse/dim/date/';
