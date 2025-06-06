@@ -33,7 +33,7 @@ CREATE EXTERNAL TABLE IF NOT EXISTS financials_raw.company_balance_sheet (
   properties DOUBLE,
   land_and_improvements DOUBLE,
   buildings_and_improvements DOUBLE,
-  machinery_furniture_equipment DUOBLE,
+  machinery_furniture_equipment DOUBLE,
   construction_in_progress DOUBLE,
   other_properties DOUBLE,
   investment_properties DOUBLE,
