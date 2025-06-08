@@ -42,7 +42,7 @@ with DAG(
 
     insert_fact_company = SQLExecuteQueryOperator(
         task_id='load_fact_company',
-        sql='insert_fact_company.sql',
+        sql='insert_fact_company_financials.sql',
         conn_id="hiveserver2_default",
     )
     insert_fact_stock = SQLExecuteQueryOperator(
