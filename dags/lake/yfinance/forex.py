@@ -33,7 +33,7 @@ FOREX_PAIRS = [
     "MYR",
     "ZAR",
     "RUB",
-][:5]
+]
 BASE_PATH = f"/data/lake/forex/provider={PROVIDER}"
 
 def get_and_upload_forex(

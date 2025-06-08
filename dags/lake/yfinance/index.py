@@ -48,7 +48,7 @@ INDEX_SYMBOLS = [
     "N225", # Nikkei 225
     "XDN", # Japanese Yen Currency Index
     "XDA", # Australian Dollar Currency Index
-][:5]
+]
 BASE_PATH = f"/data/lake/index/provider={PROVIDER}"
 
 def get_and_upload_index(
