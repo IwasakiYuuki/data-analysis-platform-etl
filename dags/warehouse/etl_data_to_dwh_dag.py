@@ -63,7 +63,9 @@ with DAG(
 
     # --- タスク依存関係 ---
     dimensions_updated = [upsert_dim_date, upsert_dim_company, upsert_dim_currency, upsert_dim_index]
+    # 同時実行するとリソース関係のエラーが出るため、直列実行
+    # 暫定処理のため、後でクラスタの設定を見直す必要あり
     dimensions_updated >> insert_fact_company
-    dimensions_updated >> insert_fact_stock
-    dimensions_updated >> insert_fact_forex
-    dimensions_updated >> insert_fact_index
+    insert_fact_company >> insert_fact_stock
+    insert_fact_stock >> insert_fact_forex
+    insert_fact_forex >> insert_fact_index
